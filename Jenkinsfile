@@ -2,7 +2,7 @@ pipeline:
   agent: any
 
   stages:
-    - stage: "SCM Checkout"
+    - stage: SCM Checkout
       steps:
         - checkout:
             scmGit:
@@ -12,28 +12,22 @@ pipeline:
               userRemoteConfigs:
                 - url: 'https://github.com/puspitasahu/jenkin-cicd-demo.git'
 
-    - stage: "Maven Build"
+    - stage: Maven Build
       steps:
         - script:
-            try:
-              - bat: 'mvn clean install' # Use 'sh' instead of 'bat' if on Unix-based agents
-            catch:
-              - error: "Maven build failed: ${e.message}"
+            - bat: 'mvn clean install'  # Use 'sh' instead of 'bat' if on Unix-based agents
 
-    - stage: "Deploy to Container"
+    - stage: Deploy to Container
       steps:
         - script:
-            try:
-              - deploy:
-                  adapters:
-                    - tomcat9:
-                        credentialsId: 'tomcat-pwd'
-                        path: ''
-                        url: 'http://localhost:9090/'
-                  contextPath: 'jenkin-CICD'
-                  war: '**/*.war'
-            catch:
-              - error: "Deployment failed: ${e.message}"
+            - deploy:
+                adapters:
+                  - tomcat9:
+                      credentialsId: 'tomcat-pwd'
+                      path: ''
+                      url: 'http://localhost:9090/'
+                contextPath: 'jenkin-CICD'
+                war: '**/*.war'
 
   post:
     always:
